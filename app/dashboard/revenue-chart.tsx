@@ -4,34 +4,16 @@ import { generateYAxis } from '@/app/lib/utils';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import { lusitana } from '@/app/ui/fonts';
 import { Revenue } from '@/app/lib/definitions';
+import { fetchRevenue } from '@/app/lib/data';
 
-export default function RevenueChart({
-  revenue,
-}: {
-  revenue: Revenue[];
-}) {
-  const [yAxisData, setYAxisData] = useState<{ yAxisLabels: string[], topLabel: number } | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const { yAxisLabels, topLabel } = generateYAxis(revenue);
-      setYAxisData({ yAxisLabels, topLabel });
-    };
-
-    fetchData();
-  }, [revenue]);
-
+export default async function RevenueChart(){
+  const revenue = await fetchRevenue();
   const chartHeight = 350;
-
+  const { yAxisLabels, topLabel } = generateYAxis(revenue);
+ 
   if (!revenue || revenue.length === 0) {
     return <p className="mt-4 text-gray-400">No data available.</p>;
   }
-
-  if (!yAxisData) {
-    return <p className="mt-4 text-gray-400">Loading...</p>;
-  }
-
-  const { yAxisLabels, topLabel } = yAxisData;
 
   return (
     <div className="w-full md:col-span-4">
